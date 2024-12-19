@@ -1,0 +1,7 @@
+## IDF Component Manager Manifest File
+dependencies:
+  igrr/arduino-nano-esp32: "*"
+  espressif/arduino-esp32:
+    version: "3.1.0-rc3"
+    pre_release: true
+    override_path: ../../common_components/arduino-esp32

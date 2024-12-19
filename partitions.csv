@@ -1,0 +1,18 @@
+# Name,   Type, SubType, Offset,    Size,     Flags
+nvs,      data, nvs,     0x9000,    0x4000,
+otadata,  data, ota,     0xd000,    0x2000,
+phy_init, data, phy,     0xf000,    0x1000,
+# Factory image, size 4Mb
+factory,  app,  factory, 0x10000,   0x400000,
+# First OTA partition, size 4Mb
+ota_0,    app,  ota_0,   0x410000,  0x400000,
+# Second OTA partition, size 4Mb
+ota_1,    app,  ota_1,   0x810000,  0x400000,
+# Main storage partition, size 3Mb
+storage1, data, ,        0xC10000,  0x300000,
+# secondairy storage partition, size 948Kb
+storage2, data, ,        0xF10000,  0xED000,
+# Three (3) readonly data sources, each size 4Kb
+storage3, data, ,        0xFFD000, 0x1000,   readonly
+storage4, data, ,        0xFFE000, 0x1000,   readonly
+storage5, data, ,        0xFFF000, 0x1000,   readonly
