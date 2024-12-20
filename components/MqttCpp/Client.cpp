@@ -1,3 +1,8 @@
+/**
+ * @file Client.cpp
+ * @brief Implementation of the MQTT client functionality.
+ */
+
 #include "Client.h"
 
 #include <stdexcept>
@@ -11,6 +16,9 @@
 
 static constexpr const char* TAG = "MqttCpp";
 
+/**
+ * @brief Constructs a new MQTT Client object.
+ */
 MqttCpp::Client::Client (void) {
 	const esp_mqtt_client_config_t mqtt_cfg = {
 		.broker = {
@@ -40,6 +48,9 @@ MqttCpp::Client::Client (void) {
 		ESP_LOGW (TAG, "Can not register event handler.");
 }
 
+/**
+ * @brief Destroys the MQTT Client object.
+ */
 MqttCpp::Client::~Client (void) {
 	if (this->_connected) esp_mqtt_client_disconnect (this->_handle);
 	esp_mqtt_client_stop (this->_handle);
@@ -53,46 +64,68 @@ MqttCpp::Client::~Client (void) {
 	this->_subscriptions.clear ();
 }
 
+/**
+ * @brief Sets the URI of the MQTT broker.
+ *
+ * @param uri The URI of the MQTT broker.
+ * @return true if the URI was set successfully.
+ * @return false if setting the URI failed.
+ */
 bool MqttCpp::Client::setUri (const char* uri) {
 	ESP_LOGD (TAG, "Set mqtt broker uri to: \"%s\".", uri);
 	if (this->_connected) this->disconnect ();
-	const char* str = strdup (uri);
 	esp_err_t ret;
-	if ((ret = esp_mqtt_client_set_uri (this->_handle, str)) == ESP_OK) {
-		this->_uri = const_cast<char*>(str);
-		return true;
-	}
+	if ((ret = esp_mqtt_client_set_uri (this->_handle, uri)) == ESP_OK) return true;
 	ESP_LOGW (TAG, "mqtt can not set broker uri to \"%s\" (%d).", uri, ret);
 	return false;
 }
 
-const char* MqttCpp::Client::getUri (void) {
-	ESP_LOGD (TAG, "get mqtt broker uri.");
-	return this->_uri;
-}
-
+/**
+ * @brief Connects to the MQTT broker.
+ *
+ * @return true if the connection attempt was successful.
+ * @return false if already connected.
+ * @throws std::runtime_error if the connection attempt failed.
+ */
 bool MqttCpp::Client::connect (void) {
 	if (this->_connected) return false;
 	ESP_LOGD (TAG, "Try to connect to broker");
 
 	esp_err_t ret;
 	if ((ret = esp_mqtt_client_start (this->_handle)) == ESP_OK) {
-		//this->_connected = true;
 		return true;
 	}
 	if (ret == ESP_ERR_INVALID_ARG)
 		ESP_LOGE (TAG, "mqtt can not start: wrong initialization (%d).", ret);
 	else if (ret == ESP_FAIL)
 		ESP_LOGE (TAG, "mqtt can not start: unknown error (%d).", ret);
-	throw std::runtime_error ("mqtt can not start.");
+	throw std::runtime_error("mqtt can not start.");
 }
 
+/**
+ * @brief Disconnects from the MQTT broker.
+ *
+ * @return true if the disconnection attempt was successful.
+ * @return false if not connected.
+ */
 bool MqttCpp::Client::disconnect (void) {
 	if (!this->_connected) return false;
 	if (esp_mqtt_client_disconnect (this->_handle) == ESP_OK) return true;
 	return false;
 }
 
+/**
+ * @brief Publishes a message to a specified topic.
+ *
+ * @param topic The topic to publish to.
+ * @param msg The message to publish.
+ * @param msg_len The length of the message.
+ * @param qos The Quality of Service level.
+ * @param retain Whether to retain the message.
+ * @param block Whether to block until the message is published.
+ * @return true if the publish attempt was successful.
+ * @return false if the publish attempt failed.
+ */
 bool MqttCpp::Client::publish (const char* const topic, const char* const msg, const int& msg_len, const int& qos, const bool& retain, const bool& block) {
 	ESP_LOGD (TAG, "Publish topic \"%s\".", topic);
 
@@ -124,6 +157,16 @@ bool MqttCpp::Client::publish (const char* const topic, const char* const msg, c
 	return false;
 }
 
+/**
+ * @brief Subscribes to a specified topic.
+ *
+ * @param topic The topic to subscribe to.
+ * @param callback The callback function to call when a message is received.
+ * @param qos The Quality of Service level.
+ * @param user_data User data to pass to the callback function.
+ * @return true if the subscription attempt was successful.
+ * @return false if the subscription attempt failed.
+ */
 bool MqttCpp::Client::subscribe (const char* const topic, const Callback callback, const int& qos, void* user_data) {
 	ESP_LOGD (TAG, "Subscribe topic \"%s\".", topic);
 
@@ -194,6 +237,16 @@ void MqttCpp::Client::eventHandler (void *handler_args, esp_event_base_t base, i
 	}
 }
 
+/**
+ * @brief Matches the topic of a message with a subscription topic.
+ *
+ * @param str1 The subscription topic.
+ * @param str1_len The length of the subscription topic.
+ * @param str2 The message topic.
+ * @param str2_len The length of the message topic.
+ * @return true if the topics match.
+ * @return false if the topics do not match.
+ */
 bool MqttCpp::Client::matchTopic (const char* const str1, const int& str1_len, const char* const str2, const int& str2_len) noexcept {
 	if (str1 == nullptr || str2 == nullptr) return false;
 

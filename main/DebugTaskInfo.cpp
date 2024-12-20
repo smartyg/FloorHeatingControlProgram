@@ -6,6 +6,11 @@
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
 
+/**
+ * @brief Task to print debug information about the heap and tasks.
+ *
+ * @param pvParameters Pointer to task parameters.
+ */
 void DebugTaskInfo (void*) {
 	vTaskDelay (pdMS_TO_TICKS (1000));
 

@@ -28,6 +28,14 @@ static constexpr const char *password = "s_T1a5GqnSbC$_0C";  // Change this to y
 
 static constexpr const char *TAG = "main";
 
+/**
+ * @brief Handler for WiFi disconnect event.
+ *
+ * @param arg Pointer to user argument.
+ * @param event_base Event base.
+ * @param event_id Event ID.
+ * @param event_data Event data.
+ */
 static void disconnect_handler (void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data) {
 	HttpServer::Server* server = static_cast<HttpServer::Server*>(arg);
 	if (server != nullptr) {
@@ -38,6 +46,14 @@ static void disconnect_handler (void* arg, esp_event_base_t event_base, int32_t 
 	}
 }
 
+/**
+ * @brief Handler for WiFi connect event.
+ *
+ * @param arg Pointer to user argument.
+ * @param event_base Event base.
+ * @param event_id Event ID.
+ * @param event_data Event data.
+ */
 static void connect_handler (void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data) {
 	HttpServer::Server* server = static_cast<HttpServer::Server*>(arg);
 	if (server != nullptr) {
@@ -47,6 +63,12 @@ static void connect_handler (void* arg, esp_event_base_t event_base, int32_t eve
 }
 
 template<typename T>
+/**
+ * @brief Factory function for HassMqtt::Attribute::Getter.
+ *
+ * @param callback Callback function.
+ * @return HassMqtt::Attribute::Getter
+ */
 const HassMqtt::Attribute::Getter getFactory (const std::function<T(void)> callback) {
 	const HassMqtt::Attribute::Getter lambda = [&callback] (const char* const, const char* const, void*) -> cJSON* {
 		if (callback != nullptr)
@@ -58,6 +80,12 @@ const HassMqtt::Attribute::Getter getFactory (const std::function<T(void)> callb
 }
 
 template<typename T>
+/**
+ * @brief Factory function for HassMqtt::Attribute::Setter.
+ *
+ * @param callback Callback function.
+ * @return HassMqtt::Attribute::Setter
+ */
 const HassMqtt::Attribute::Setter setFactory (const std::function<bool(const T)> callback) {
 	const HassMqtt::Attribute::Setter lambda = [&callback] (const cJSON* const json, const char* const, const char* const, void*) -> void {
 		T value;
@@ -83,6 +111,9 @@ inline bool cJSON_GetValue (const cJSON* const json, Status::ControlMode& value)
 	return false;
 }
 
+/**
+ * @brief Setup function for initializing the system.
+ */
 void setup (void) {
 	vTaskDelay (10);
 
