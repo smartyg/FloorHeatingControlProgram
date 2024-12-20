@@ -2,6 +2,8 @@
 
 #include <array>
 #include <cstdio>
+
+#include <Arduino.h>
 #include <bsp/arduino-nano-esp32.h>
 
 // Local components

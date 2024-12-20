@@ -15,12 +15,14 @@ namespace MqttCpp {
 		esp_mqtt_client_handle_t _handle;
 		bool _connected = false;
 		std::forward_list<const Subscription*> _subscriptions;
+		char* _uri = "mqtt://127.0.0.1:1883";
 
 	public:
 		Client (void);
 		~Client (void);
 
 		bool setUri (const char* uri);
+		const char* getUri (void);
 		bool connect (void);
 		bool disconnect (void);
 		bool publish (const char* const topic, const char* const msg, const int& msg_len, const int& qos = 1, const bool& retain = false, const bool& block = false);

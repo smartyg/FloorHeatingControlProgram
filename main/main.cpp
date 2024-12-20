@@ -1,6 +1,6 @@
 #include <cstdio>
 
-//#include <Arduino.h>
+#include <Arduino.h>
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
 #include <esp_log.h>

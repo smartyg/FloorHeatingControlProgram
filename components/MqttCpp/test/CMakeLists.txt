@@ -1,3 +1,3 @@
-idf_component_register(SRCS "test_mqtt.cpp"
+idf_component_register(SRCS "test_client.cpp"
                        INCLUDE_DIRS "."
-                       REQUIRES unity mqtt esp-MqttCpp)  # Add other required components
+                       REQUIRES unity mqtt MqttCpp)  # Add other required components

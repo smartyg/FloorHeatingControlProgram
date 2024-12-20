@@ -15,7 +15,7 @@ MqttCpp::Client::Client (void) {
 	const esp_mqtt_client_config_t mqtt_cfg = {
 		.broker = {
 			.address = {
-				.uri = "mqtt://127.0.0.1:1883",
+				.uri = this->_uri,
 			},
 			.verification = {},
 		},
@@ -56,10 +56,19 @@ MqttCpp::Client::~Client (void) {
 bool MqttCpp::Client::setUri (const char* uri) {
 	ESP_LOGD (TAG, "Set mqtt broker uri to: \"%s\".", uri);
 	if (this->_connected) this->disconnect ();
+	const char* str = strdup (uri);
 	esp_err_t ret;
-	if ((ret = esp_mqtt_client_set_uri (this->_handle, uri)) == ESP_OK) return true;
+	if ((ret = esp_mqtt_client_set_uri (this->_handle, str)) == ESP_OK) {
+		this->_uri = const_cast<char*>(str);
+		return true;
+	}
 	ESP_LOGW (TAG, "mqtt can not set broker uri to \"%s\" (%d).", uri, ret);
 	return false;
+}
+
+const char* MqttCpp::Client::getUri (void) {
+	ESP_LOGD (TAG, "get mqtt broker uri.");
+	return this->_uri;
 }
 
 bool MqttCpp::Client::connect (void) {

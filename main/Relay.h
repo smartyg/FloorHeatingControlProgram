@@ -3,6 +3,8 @@
 
 #include <cstdint>
 #include <array>
+
+#include <Arduino.h>
 #include <esp32-hal-gpio.h>
 
 typedef uint8_t pin_addr_t;
