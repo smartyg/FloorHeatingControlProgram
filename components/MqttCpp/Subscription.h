@@ -29,7 +29,7 @@ namespace MqttCpp {
 		 * @param qos The Quality of Service level.
 		 * @param user_data User data to pass to the callback function.
 		 */
-		Subscription(const char* const topic, const Callback callback, const uint8_t& qos = 2, void* user_data = nullptr) : _callback(callback), _qos(qos), _user_data(user_data) {
+		Subscription (const char* const topic, const Callback callback, const uint8_t& qos = 2, void* user_data = nullptr) : _callback(callback), _qos(qos), _user_data(user_data) {
 			this->_topic = strdup(topic);
 			this->_topic_len = strlen(this->_topic);
 		}
@@ -37,8 +37,8 @@ namespace MqttCpp {
 		/**
 		 * @brief Destroys the Subscription object.
 		 */
-		~Subscription(void) {
-			free(const_cast<char*>(this->_topic));
+		~Subscription (void) {
+			free (const_cast<char*>(this->_topic));
 			this->_topic = nullptr;
 			this->_user_data = nullptr;
 		}
