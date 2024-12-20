@@ -1,49 +1,112 @@
-#ifndef MQTTCPP_CLIENT_H
-#define MQTTCPP_CLIENT_H
+/**
+ * @file Client.h
+ * @brief Defines the Client class for MQTT operations.
+ */
 
-#include <forward_list>
+#ifndef MQTTCPP_CLIENTT_H
+#define MQTTCPP_CLIENTT_H
 
+#include <list>
 #include <mqtt_client.h>
 
-#include "typedef.h"
+#include "Subscription.h"
 
 namespace MqttCpp {
-	class Subscription;
 
+	/**
+	 * @brief Class representing an MQTT client.
+	 */
 	class Client {
-	private:
-		esp_mqtt_client_handle_t _handle;
-		bool _connected = false;
-		std::forward_list<const Subscription*> _subscriptions;
-
 	public:
-		Client (void);
-		~Client (void);
+		/**
+		 * @brief Constructs a new Client object.
+		 */
+		Client(void);
 
-		bool setUri (const char* uri);
-		bool connect (void);
-		bool disconnect (void);
-		bool publish (const char* const topic, const char* const msg, const int& msg_len, const int& qos = 1, const bool& retain = false, const bool& block = false);
-		bool subscribe (const char* const topic, const Callback callback, const int& qos, void* user_data);
+		/**
+		 * @brief Destroys the Client object.
+		 */
+		~Client(void);
 
-		inline bool isConnected (void) const noexcept {
-			return this->_connected;
-		}
+		/**
+		 * @brief Sets the URI for the MQTT broker.
+		 *
+		 * @param uri The URI of the MQTT broker.
+		 * @return true if the URI was set successfully.
+		 * @return false otherwise.
+		 */
+		bool setUri(const char* uri);
+
+		/**
+		 * @brief Connects to the MQTT broker.
+		 *
+		 * @return true if the connection was successful.
+		 * @return false otherwise.
+		 */
+		bool connect(void);
+
+		/**
+		 * @brief Disconnects from the MQTT broker.
+		 *
+		 * @return true if the disconnection was successful.
+		 * @return false otherwise.
+		 */
+		bool disconnect(void);
+
+		/**
+		 * @brief Publishes a message to a topic.
+		 *
+		 * @param topic The topic to publish to.
+		 * @param msg The message to publish.
+		 * @param msg_len The length of the message.
+		 * @param qos The Quality of Service level.
+		 * @param retain Whether to retain the message.
+		 * @param block Whether to block until the message is published.
+		 * @return true if the message was published successfully.
+		 * @return false otherwise.
+		 */
+		bool publish(const char* const topic, const char* const msg, const int& msg_len, const int& qos, const bool& retain, const bool& block);
+
+		/**
+		 * @brief Subscribes to a topic.
+		 *
+		 * @param topic The topic to subscribe to.
+		 * @param callback The callback function to call when a message is received.
+		 * @param qos The Quality of Service level.
+		 * @param user_data User data to pass to the callback function.
+		 * @return true if the subscription was successful.
+		 * @return false otherwise.
+		 */
+		bool subscribe(const char* const topic, const Callback callback, const int& qos, void* user_data);
 
 	private:
-		/*
-		 * @brief Event handler registered to receive MQTT events
-		 *
-		 *  This function is called by the MQTT client event loop.
-		 *
-		 * @param handler_args user data registered to the event.
-		 * @param base Event base for the handler(always MQTT Base in this example).
-		 * @param event_id The id for the received event.
-		 * @param event_data The data for the event, esp_mqtt_event_handle_t.
-		 */
-		static void eventHandler (void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data);
-		static bool matchTopic (const char* const str1, const int& str1_len, const char* const str2, const int& str2_len) noexcept;
-	};
-}
+		esp_mqtt_client_handle_t _handle; ///< The MQTT client handle.
+		bool _connected = false; ///< Whether the client is connected to the broker.
+		std::list<const Subscription*> _subscriptions; ///< The list of subscriptions.
 
-#endif /* MQTTCPP_CLIENT_H */
+		/**
+		 * @brief Handles MQTT events.
+		 *
+		 * @param handler_args User data registered to the event.
+		 * @param base Event base for the handler.
+		 * @param event_id The ID for the received event.
+		 * @param event_data The data for the event.
+		 */
+		static void eventHandler(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data);
+
+		/**
+		 * @brief Matches a topic string against a subscription topic.
+		 *
+		 * @param str1 The subscription topic.
+		 * @param str1_len The length of the subscription topic.
+		 * @param str2 The message topic.
+		 * @param str2_len The length of the message topic.
+		 * @return true if the topics match.
+		 * @return false otherwise.
+		 */
+		static bool matchTopic(const char* const str1, const int& str1_len, const char* const str2, const int& str2_len) noexcept;
+	};
+
+} // namespace MqttCpp
+
+#endif /* MQTTCPP_CLIENTT_H */

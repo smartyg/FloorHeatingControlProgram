@@ -1,36 +1,47 @@
-// components/esp-MqttCpp/test/test_mqtt.cpp
+/**
+ * @file test_mqtt.cpp
+ * @brief Unit tests for the MQTT client using Unity framework.
+ */
 
 #include "unity.h"
 #include "Client.h"
 #include "mqtt_client.h"
 
-// Function to set up things before any tests are run
+/**
+ * @brief Set up function called before any tests are run.
+ */
 void setUp(void) {
-    // Initialization code here
+	// Initialization code here
 }
 
-// Function to clean up after all tests are run
+/**
+ * @brief Tear down function called after all tests are run.
+ */
 void tearDown(void) {
-    // Clean-up code here
+	// Clean-up code here
 }
 
-// Example test case
+/**
+ * @brief Test case for MQTT connection.
+ */
 void test_mqtt_connection(void) {
-    esp_mqtt_client_config_t mqtt_cfg = {
-        .uri = "mqtt://test.mosquitto.org",
-    };
-    esp_mqtt_client_handle_t client = esp_mqtt_client_init(&mqtt_cfg);
-    TEST_ASSERT_NOT_NULL(client);
-    esp_mqtt_client_start(client);
-    // Add more assertions and checks here
-    esp_mqtt_client_stop(client);
-    esp_mqtt_client_destroy(client);
+	esp_mqtt_client_config_t mqtt_cfg = {
+		.uri = "mqtt://test.mosquitto.org", ///< URI of the MQTT broker.
+	};
+	esp_mqtt_client_handle_t client = esp_mqtt_client_init(&mqtt_cfg);
+	TEST_ASSERT_NOT_NULL(client); ///< Assert that the client is successfully initialized.
+	esp_mqtt_client_start(client);
+	// Add more assertions and checks here
+	esp_mqtt_client_stop(client);
+	esp_mqtt_client_destroy(client);
 }
 
-// Main function to run the tests
+/**
+ * @brief Main function to run the tests.
+ */
 extern "C" void app_main(void) {
-    UNITY_BEGIN();
-    RUN_TEST(test_mqtt_connection);
-    // Add more RUN_TEST statements here for additional test cases
-    UNITY_END();
+	UNITY_BEGIN();
+	RUN_TEST(test_mqtt_connection);
+	// Add more RUN_TEST statements here for additional test cases
+	UNITY_END();
 }
