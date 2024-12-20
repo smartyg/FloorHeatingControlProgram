@@ -1,4 +1,0 @@
-[submodule "components/MqttCpp"]
-	path = components/MqttCpp
-	url = https://github.com/smartyg/esp-MqttCpp.git
-	branch = development
