@@ -4,11 +4,10 @@
 # CMakeLists in this exact order for cmake to work correctly
 cmake_minimum_required(VERSION 3.16)
 
-set(COMPONENTS main)
-
 set(EXTRA_COMPONENT_DIRS
-    "../common_components/esp-protocols/common_components/linux_compat"
-    "../common_components/esp-protocols/components/mdns/tests/host_test/components")
+    "components/MqttCpp/test")
+#     "../common_components/esp-protocols/common_components/linux_compat"
+#     "../common_components/esp-protocols/components/mdns/tests/host_test/components")
 
 include($ENV{IDF_PATH}/tools/cmake/project.cmake)
 project(main)

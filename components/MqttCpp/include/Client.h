@@ -3,30 +3,36 @@
  * @brief Defines the Client class for MQTT operations.
  */
 
-#ifndef MQTTCPP_CLIENTT_H
-#define MQTTCPP_CLIENTT_H
+#ifndef MQTTCPP_CLIENT_H
+#define MQTTCPP_CLIENT_H
 
-#include <list>
+#include <forward_list>
 #include <mqtt_client.h>
 
-#include "Subscription.h"
+#include "typedef.h"
 
 namespace MqttCpp {
+	class Subscription;
 
 	/**
 	 * @brief Class representing an MQTT client.
 	 */
 	class Client {
+	private:
+		esp_mqtt_client_handle_t _handle; ///< The MQTT client handle.
+		bool _connected = false; ///< Whether the client is connected to the broker.
+		std::forward_list<const Subscription*> _subscriptions; ///< The list of subscriptions.
+
 	public:
 		/**
 		 * @brief Constructs a new Client object.
 		 */
-		Client(void);
+		Client (void);
 
 		/**
 		 * @brief Destroys the Client object.
 		 */
-		~Client(void);
+		~Client (void);
 
 		/**
 		 * @brief Sets the URI for the MQTT broker.
@@ -35,7 +41,9 @@ namespace MqttCpp {
 		 * @return true if the URI was set successfully.
 		 * @return false otherwise.
 		 */
-		bool setUri(const char* uri);
+		bool setUri (const char* uri);
+
+		const char* getUri (void);
 
 		/**
 		 * @brief Connects to the MQTT broker.
@@ -43,7 +51,7 @@ namespace MqttCpp {
 		 * @return true if the connection was successful.
 		 * @return false otherwise.
 		 */
-		bool connect(void);
+		bool connect (void);
 
 		/**
 		 * @brief Disconnects from the MQTT broker.
@@ -51,7 +59,7 @@ namespace MqttCpp {
 		 * @return true if the disconnection was successful.
 		 * @return false otherwise.
 		 */
-		bool disconnect(void);
+		bool disconnect (void);
 
 		/**
 		 * @brief Publishes a message to a topic.
@@ -65,7 +73,7 @@ namespace MqttCpp {
 		 * @return true if the message was published successfully.
 		 * @return false otherwise.
 		 */
-		bool publish(const char* const topic, const char* const msg, const int& msg_len, const int& qos, const bool& retain, const bool& block);
+		bool publish (const char* const topic, const char* const msg, const int& msg_len, const int& qos = 1, const bool& retain = false, const bool& block = false);
 
 		/**
 		 * @brief Subscribes to a topic.
@@ -77,13 +85,13 @@ namespace MqttCpp {
 		 * @return true if the subscription was successful.
 		 * @return false otherwise.
 		 */
-		bool subscribe(const char* const topic, const Callback callback, const int& qos, void* user_data);
+		bool subscribe (const char* const topic, const Callback callback, const int& qos, void* user_data);
+
+		inline bool isConnected (void) const noexcept {
+			return this->_connected;
+		}
 
 	private:
-		esp_mqtt_client_handle_t _handle; ///< The MQTT client handle.
-		bool _connected = false; ///< Whether the client is connected to the broker.
-		std::list<const Subscription*> _subscriptions; ///< The list of subscriptions.
-
 		/**
 		 * @brief Handles MQTT events.
 		 *
@@ -92,7 +100,7 @@ namespace MqttCpp {
 		 * @param event_id The ID for the received event.
 		 * @param event_data The data for the event.
 		 */
-		static void eventHandler(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data);
+		static void eventHandler (void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data);
 
 		/**
 		 * @brief Matches a topic string against a subscription topic.
@@ -104,9 +112,9 @@ namespace MqttCpp {
 		 * @return true if the topics match.
 		 * @return false otherwise.
 		 */
-		static bool matchTopic(const char* const str1, const int& str1_len, const char* const str2, const int& str2_len) noexcept;
+		static bool matchTopic (const char* const str1, const int& str1_len, const char* const str2, const int& str2_len) noexcept;
 	};
 
 } // namespace MqttCpp
 
-#endif /* MQTTCPP_CLIENTT_H */
+#endif /* MQTTCPP_CLIENT_H */

@@ -1,6 +1,8 @@
 ## IDF Component Manager Manifest File
 dependencies:
-  igrr/arduino-nano-esp32: "*"
+  igrr/arduino-nano-esp32:
+    git: https://github.com/igrr/arduino-nano-esp32.git
+    version: v1.3.0
   espressif/arduino-esp32:
     version: "3.1.0-rc3"
     pre_release: true
