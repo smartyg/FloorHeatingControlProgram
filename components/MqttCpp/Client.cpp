@@ -193,6 +193,14 @@ bool MqttCpp::Client::subscribe (const char* const topic, const Callback callbac
 	return false;
 }
 
+/**
+ * @brief Handles MQTT events.
+ *
+ * @param handler_args User data registered to the event.
+ * @param base Event base for the handler.
+ * @param event_id The ID for the received event.
+ * @param event_data The data for the event.
+ */
 void MqttCpp::Client::eventHandler (void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data) {
 	ESP_LOGD (TAG, "Event dispatched from event loop base=%s, event_id=%" PRIi32 "", base, event_id);
 	MqttCpp::Client* mqtt = static_cast<MqttCpp::Client*>(handler_args);
