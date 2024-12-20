@@ -6,8 +6,7 @@
 #ifndef MQTTCPP_H
 #define MQTTCPP_H
 
-#include "Client.h"
-#include "Subscription.h"
 #include "typedef.h"
+#include "Client.h"
 
 #endif /* MQTTCPP_H */

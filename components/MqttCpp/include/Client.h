@@ -14,6 +14,8 @@
 namespace MqttCpp {
 	class Subscription;
 
+	static constexpr const char* const default_broker = "mqtt://127.0.0.1:1883";
+
 	/**
 	 * @brief Class representing an MQTT client.
 	 */
@@ -22,6 +24,7 @@ namespace MqttCpp {
 		esp_mqtt_client_handle_t _handle; ///< The MQTT client handle.
 		bool _connected = false; ///< Whether the client is connected to the broker.
 		std::forward_list<const Subscription*> _subscriptions; ///< The list of subscriptions.
+		char* _uri = nullptr;
 
 	public:
 		/**
@@ -43,7 +46,9 @@ namespace MqttCpp {
 		 */
 		bool setUri (const char* uri);
 
-		const char* getUri (void);
+		inline const char* getUri (void) const noexcept {
+			return this->_uri;
+		}
 
 		/**
 		 * @brief Connects to the MQTT broker.

@@ -20,6 +20,8 @@ static constexpr const char* TAG = "MqttCpp";
  * @brief Constructs a new MQTT Client object.
  */
 MqttCpp::Client::Client (void) {
+	this->_uri = strdup (MqttCpp::default_broker);
+
 	const esp_mqtt_client_config_t mqtt_cfg = {
 		.broker = {
 			.address = {
@@ -42,6 +44,7 @@ MqttCpp::Client::Client (void) {
 		.buffer = {},
 		.outbox = {},
 	};
+
 	this->_handle = esp_mqtt_client_init (&mqtt_cfg);
 	if (this->_handle == nullptr) throw std::runtime_error ("mqtt initialization failed.");
 	if (esp_mqtt_client_register_event (this->_handle, static_cast<esp_mqtt_event_id_t>(ESP_EVENT_ANY_ID), MqttCpp::Client::eventHandler, this) != ESP_OK)
@@ -62,6 +65,8 @@ MqttCpp::Client::~Client (void) {
 		delete s;
 	}
 	this->_subscriptions.clear ();
+	free (this->_uri);
+	this->_uri = nullptr;
 }
 
 /**
@@ -74,9 +79,11 @@ MqttCpp::Client::~Client (void) {
 bool MqttCpp::Client::setUri (const char* uri) {
 	ESP_LOGD (TAG, "Set mqtt broker uri to: \"%s\".", uri);
 	if (this->_connected) this->disconnect ();
+	free (this->_uri);
+	this->_uri = strdup (uri);
 	esp_err_t ret;
-	if ((ret = esp_mqtt_client_set_uri (this->_handle, uri)) == ESP_OK) return true;
-	ESP_LOGW (TAG, "mqtt can not set broker uri to \"%s\" (%d).", uri, ret);
+	if ((ret = esp_mqtt_client_set_uri (this->_handle, this->_uri)) == ESP_OK) return true;
+	ESP_LOGW (TAG, "mqtt can not set broker uri to \"%s\" (%d).", this->_uri, ret);
 	return false;
 }
 
