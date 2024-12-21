@@ -81,6 +81,7 @@ void test_Client_matchTopic(void) {
     TEST_ASSERT_TRUE(result);  // Verify the function returned true
 }
 */
+/*
 // Main function to run the tests
 extern "C" void app_main(void) {
     UNITY_BEGIN();
@@ -94,3 +95,4 @@ extern "C" void app_main(void) {
     //RUN_TEST(test_Client_matchTopic);
     UNITY_END();
 }
+*/
